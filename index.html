@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .question-container {
+            font-size: 24px;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        input {
+            font-size: 18px;
+            padding: 10px;
+            width: 100px;
+            margin: 10px;
+            text-align: center;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .score {
+            font-size: 20px;
+            margin: 20px 0;
+            color: #27ae60;
+        }
+
+        .result-message {
+            margin: 20px 0;
+            font-size: 18px;
+            min-height: 24px;
+        }
+
+        .correct { color: #27ae60; }
+        .wrong { color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Math Quiz</h1>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="question-container">
+            <span id="question"></span>
+        </div>
+        <input type="number" id="answer" placeholder="Enter answer">
+        <div class="result-message" id="result"></div>
+        <button onclick="checkAnswer()">Submit</button>
+        <button onclick="nextQuestion()" id="nextBtn" style="display: none;">Next Question</button>
+        <button onclick="resetQuiz()" id="resetBtn" style="display: none;">Restart Quiz</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let currentQuestion = 1;
+        const totalQuestions = 10;
+        let correctAnswer;
+
+        function generateQuestion() {
+            const num1 = Math.floor(Math.random() * 20) + 1;
+            const num2 = Math.floor(Math.random() * 20) + 1;
+            const operators = ['+', '-', '*'];
+            const operator = operators[Math.floor(Math.random() * operators.length)];
+
+            let questionText;
+            switch(operator) {
+                case '+':
+                    correctAnswer = num1 + num2;
+                    questionText = `${num1} + ${num2} = ?`;
+                    break;
+                case '-':
+                    correctAnswer = Math.max(num1, num2) - Math.min(num1, num2);
+                    questionText = `${Math.max(num1, num2)} - ${Math.min(num1, num2)} = ?`;
+                    break;
+                case '*':
+                    correctAnswer = num1 * num2;
+                    questionText = `${num1} × ${num2} = ?`;
+                    break;
+            }
+
+            document.getElementById('question').textContent = questionText;
+            document.getElementById('answer').value = '';
+            document.getElementById('result').textContent = '';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            
+            if (isNaN(userAnswer)) {
+                document.getElementById('result').textContent = 'Please enter a number!';
+                document.getElementById('result').className = 'result-message wrong';
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                score++;
+                document.getElementById('score').textContent = score;
+                document.getElementById('result').textContent = 'Anjay Keren! Well done!';
+                document.getElementById('result').className = 'result-message correct';
+            } else {
+                document.getElementById('result').textContent = `Wrong! The correct answer was ${correctAnswer}`;
+                document.getElementById('result').className = 'result-message wrong';
+            }
+
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion > totalQuestions) {
+                endQuiz();
+            } else {
+                generateQuestion();
+            }
+        }
+
+        function endQuiz() {
+            document.getElementById('question').textContent = `Quiz Complete! You scored ${score}/${totalQuestions}`;
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('resetBtn').style.display = 'inline-block';
+            document.getElementById('result').textContent = '';
+        }
+
+        function resetQuiz() {
+            score = 0;
+            currentQuestion = 1;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('answer').style.display = 'inline-block';
+            document.getElementById('resetBtn').style.display = 'none';
+            document.getElementById('result').textContent = '';
+            generateQuestion();
+        }
+
+        // Start the quiz
+        generateQuestion();
+    </script>
+</body>
+</html>
